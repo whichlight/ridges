@@ -63,7 +63,7 @@ function update(){
   gsynth.setVolume(map(outVal,1,0,0.1,0.2));
 
 
-  esynth.setPitch(map(outVal,1,0,note*4.5,note*4));
+  esynth.setPitch(map(outVal,1,0,note*4.1,note*4));
   esynth.setVolume(map(outVal,1,0,0.1,0.3));
 
 
