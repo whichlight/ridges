@@ -49,22 +49,22 @@ function update(){
   m.y = max(touchY, mouseY);
   m.pressed = mouseIsPressed || touchIsDown;
 
- // fsynth.setPitch(map(outVal,1,0,note*4*2/3,note*2/3));
+  //drones higher w pull
   fsynth.lfo.frequency.value=(map(outVal,1,0,note*10.7,note*10.4));
-  fsynth.setVolume(map(outVal,1,0,0.4,0));
+  fsynth.setVolume(map(outVal,1,0,0.18,0));
 
   dsynth.setPitch(map(outVal,1,0,note*4*2,note*4*2.1));
-  dsynth.lfo.frequency.value=(map(outVal,1,0,note*4.01,note*4.4));
-  dsynth.setVolume(map(outVal,1,0,0.4,0));
+  dsynth.lfo.frequency.value=(map(outVal,1,0,note*4.01,note*4.05));
+  dsynth.setVolume(map(outVal,1,0,0.18,0));
 
- // this.lfo.frequency.value = this.lfo_pitch_freq;
 
-//  gsynth.setPitch(map(outVal,1,0,note,note/2));
-  gsynth.setVolume(map(outVal,1,0,0.1,0.2));
 
+  //back drones
+  gsynth.setVolume(map(outVal,1,0,0.1,0.50));
+  hsynth.setVolume(map(outVal,1,0,0.1,0.50));
 
   esynth.setPitch(map(outVal,1,0,note*4.1,note*4));
-  esynth.setVolume(map(outVal,1,0,0.1,0.3));
+  esynth.setVolume(map(outVal,1,0,0.1,0.85));
 
 
 }
@@ -77,7 +77,7 @@ function render(){
 
   outVal = (grow-minGrow)/(maxGrow-minGrow);
 
-  if(frameCount%10==0){console.log(outVal);}
+  //if(frameCount%10==0){console.log(outVal);}
 
   if(!m.pressed){
     if(initialize==false){
@@ -275,14 +275,28 @@ function initSynth(){
 
   if(typeof(context)!="undefined"){
 
-    gsynth = new Drone(note, 0.7, note*2.001, note*2.008);
-    gsynth.setFilter(300);
+    gsynth = new Drone(note, 0.8, 0.1, note*2.008);
+    gsynth.setFilter(150); //200
     gsynth.setVolume(0);
 
 
-    esynth = new Drone(note*4, 0.6, note*8.001, note*2.001);
-    esynth.setFilter(400);
+    esynth = new Drone(note*4, 0.7, 0.2, note*2.001);
+    esynth.setFilter(120); //120
     esynth.setVolume(0);
+
+    hsynth = new Drone(note*5*4/3, 0.7, 0.22, note*5.001);
+    hsynth.setFilter(110); //120
+    hsynth.setVolume(0);
+
+
+
+
+
+    asynth = new Drone(note*8*3/2, 0.15, 0.08, note*4.001);
+    asynth.setFilter(200); //120
+
+ bsynth = new Drone(note*9*4/3, 0.2, 0.11, note*5*4/3);
+    bsynth.setFilter(200); //120
 
 
 
