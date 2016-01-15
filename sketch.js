@@ -2,7 +2,6 @@
 var m= {x:0, y:0};
 var mi= {x:0, y:0};
 
-
 var initialize = true;
 var grow;
 var g;
@@ -13,13 +12,13 @@ var outVal=0;
 
 var note =50;
 
+var synthsOn=false;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   grow = windowHeight;
   background(0);
   initSynth();
-
 
   //disable default touch events for mobile
   var el = document.getElementsByTagName("canvas")[0];
@@ -31,7 +30,7 @@ function setup() {
 }
 
 function windowResized() {
-    resizeCanvas(windowWidth, windowHeight);
+  resizeCanvas(windowWidth, windowHeight);
 }
 
 function pdefault(e){
@@ -49,22 +48,25 @@ function update(){
   m.y = max(touchY, mouseY);
   m.pressed = mouseIsPressed || touchIsDown;
 
-  //drones higher w pull
-  fsynth.lfo.frequency.value=(map(outVal,1,0,note*10.7,note*10.4));
-  fsynth.setVolume(map(outVal,1,0,0.18,0));
+  if(synthsOn){
 
-  dsynth.setPitch(map(outVal,1,0,note*4*2,note*4*2.1));
-  dsynth.lfo.frequency.value=(map(outVal,1,0,note*4.01,note*4.05));
-  dsynth.setVolume(map(outVal,1,0,0.18,0));
+    //drones higher w pull
+    fsynth.lfo.frequency.value=(map(outVal,1,0,note*10.7,note*10.4));
+    fsynth.setVolume(map(outVal,1,0,0.18,0));
+
+    dsynth.setPitch(map(outVal,1,0,note*4*2,note*4*2.1));
+    dsynth.lfo.frequency.value=(map(outVal,1,0,note*4.01,note*4.05));
+    dsynth.setVolume(map(outVal,1,0,0.18,0));
 
 
 
-  //back drones
-  gsynth.setVolume(map(outVal,1,0,0.1,0.50));
-  hsynth.setVolume(map(outVal,1,0,0.1,0.50));
+    //back drones
+    gsynth.setVolume(map(outVal,1,0,0.1,0.50));
+    hsynth.setVolume(map(outVal,1,0,0.1,0.50));
 
-  esynth.setPitch(map(outVal,1,0,note*4.1,note*4));
-  esynth.setVolume(map(outVal,1,0,0.1,0.85));
+    esynth.setPitch(map(outVal,1,0,note*4.1,note*4));
+    esynth.setVolume(map(outVal,1,0,0.1,0.85));
+  }
 
 
 }
@@ -92,8 +94,8 @@ function render(){
 
   if(m.pressed){
     if(initialize){
-     mi.y = m.y;
-     initialize=false;
+      mi.y = m.y;
+      initialize=false;
     }
     ydiff = (mi.y-m.y);
 
@@ -113,7 +115,7 @@ function render(){
           }
         }
         if(grow<=minGrow){
-           if(ydiff>=0){
+          if(ydiff>=0){
             offset=-ydiff;
           }else{
             grow= grow - ydiff;
@@ -126,13 +128,13 @@ function render(){
     }
 
     /*
-    if(grow<=minGrow){
-      speed--;
-    }
-    if(grow>=maxGrow){
-      speed++;
-    }
-    */
+       if(grow<=minGrow){
+       speed--;
+       }
+       if(grow>=maxGrow){
+       speed++;
+       }
+       */
 
 
 
@@ -246,9 +248,9 @@ Drone.prototype.play = function(){
 }
 
 Drone.prototype.stop = function(){
-    this.setVolume(0);
-    this.osc.disconnect();
-    return false;
+  this.setVolume(0);
+  this.osc.disconnect();
+  return false;
 }
 
 
@@ -259,14 +261,13 @@ function initSynth(){
 
     var iOS = ( navigator.userAgent.match(/(iPad|iPhone|iPod)/g) ? true : false );
     if (iOS) {
-        window.addEventListener('touchend', function() {
-            var buffer = context.createBuffer(1, 1, 22050);
-            var source = context.createBufferSource();
-            source.buffer = buffer;
-            source.connect(context.destination);
-            source.start(0);
-            $("#initialize").remove();
-        }, false);
+      window.addEventListener('touchend', function() {
+        var buffer = context.createBuffer(1, 1, 22050);
+        var source = context.createBufferSource();
+        source.buffer = buffer;
+        source.connect(context.destination);
+        source.start(0);
+      }, false);
     }
   }
   catch (err){
@@ -275,10 +276,17 @@ function initSynth(){
 
   if(typeof(context)!="undefined"){
 
+     document.getElementById('play').addEventListener('touchend', playAudio);
+     document.getElementById('play').addEventListener('mouseup', playAudio);
+
+
+  }
+}
+
+function playAudio(){
     gsynth = new Drone(note, 0.8, 0.1, note*2.008);
     gsynth.setFilter(150); //200
     gsynth.setVolume(0);
-
 
     esynth = new Drone(note*4, 0.7, 0.2, note*2.001);
     esynth.setFilter(120); //120
@@ -289,28 +297,24 @@ function initSynth(){
     hsynth.setVolume(0);
 
 
-
-
-
     asynth = new Drone(note*8*3/2, 0.15, 0.08, note*4.001);
     asynth.setFilter(200); //120
 
- bsynth = new Drone(note*9*4/3, 0.2, 0.11, note*5*4/3);
+    bsynth = new Drone(note*9*4/3, 0.2, 0.11, note*5*4/3);
     bsynth.setFilter(200); //120
 
 
-
-
-     dsynth = new Drone(note*4*2, 0.2, 0, note*4.001);
+    dsynth = new Drone(note*4*2, 0.2, 0, note*4.001);
     dsynth.lfoGain.gain.value = 1000;
-     dsynth.setFilter(500);
+    dsynth.setFilter(500);
     dsynth.setVolume(0);
 
-     fsynth = new Drone(note*4*1/3, 0.2, 200, note*4.601);
-  fsynth.lfoGain.gain.value = 500;
-      fsynth.setFilter(500);
+    fsynth = new Drone(note*4*1/3, 0.2, 200, note*4.601);
+    fsynth.lfoGain.gain.value = 500;
+    fsynth.setFilter(500);
     fsynth.setVolume(0);
-
-  }
+    var elem = document.getElementById("play");
+    elem.parentNode.removeChild(elem);
+    synthsOn=true;
 }
 
