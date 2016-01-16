@@ -14,11 +14,24 @@ var note =50;
 
 var synthsOn=false;
 
+var backcolor;
+var frontcolor;
+
+
+
 function setup() {
+  colorMode(HSB,100,100,100);
   createCanvas(windowWidth, windowHeight);
   grow = windowHeight;
   background(0);
   initSynth();
+
+
+  backcolor = color(50,100,70); //to hue 90
+  frontcolor = color(90,100,100); //to hue 13
+
+
+
 
   //disable default touch events for mobile
   var el = document.getElementsByTagName("canvas")[0];
@@ -52,11 +65,11 @@ function update(){
 
     //drones higher w pull
     fsynth.lfo.frequency.value=(map(outVal,1,0,note*10.7,note*10.4));
-    fsynth.setVolume(map(outVal,1,0,0.18,0));
+    fsynth.setVolume(map(outVal,1,0,0.2,0));
 
     dsynth.setPitch(map(outVal,1,0,note*4*2,note*4*2.1));
     dsynth.lfo.frequency.value=(map(outVal,1,0,note*4.01,note*4.05));
-    dsynth.setVolume(map(outVal,1,0,0.18,0));
+    dsynth.setVolume(map(outVal,1,0,0.2,0));
 
 
 
@@ -67,6 +80,13 @@ function update(){
     esynth.setPitch(map(outVal,1,0,note*4.1,note*4));
     esynth.setVolume(map(outVal,1,0,0.1,0.85));
   }
+
+
+  var bcol = (50+50*outVal)%100;
+  backcolor = color(bcol,100,70); //to hue 90
+  var fcol = (90 -77*outVal)%100;
+  frontcolor = color(fcol,100,100); //to hue 13
+
 
 
 }
@@ -140,8 +160,7 @@ function render(){
 
   }
 
-
-  background(0);
+  background(backcolor);
   stroke(255);
   strokeWeight(10);
 
@@ -149,10 +168,10 @@ function render(){
   for(var i=-40; i<windowHeight/20+30; i+=1){
     // line(i, 0, i, windowHeight);
     strokeWeight(Math.pow((i+40+(ydiff/20))/20,2));
-    stroke(255);
+    stroke(frontcolor);
     line(0, windowHeight- 20*i + offset, windowWidth/2,grow-20*i + offset);
     strokeWeight(Math.pow((i+40+(ydiff/20))/20,2));
-    stroke(255);
+    stroke(frontcolor);
     line(windowWidth, windowHeight- 20*i+offset, windowWidth/2,grow-20*i+offset);
   }
 
