@@ -83,9 +83,12 @@ function update(){
 
 
   var bcol = (50+50*outVal)%100;
-  backcolor = color(bcol,100,70); //to hue 90
+  var bsat = 70;
+  if(outVal>0.85){bsat+=(map(outVal,.85,1,0,25))}
+  backcolor = color(bcol,100,bsat); //to hue 90
   var fcol = (90 -77*outVal)%100;
-  frontcolor = color(fcol,100,100); //to hue 13
+  var fsat = map(outVal, 0,1,100,40);
+  frontcolor = color(fcol,fsat,100); //to hue 13
 
 
 
